@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสำรวจข้อมูลและความต้องการของวิทยากร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+        .loading { display: none; }
+        .loading.show { display: block; }
+        .success-message { display: none; }
+        .success-message.show { display: block; }
+        .error-message { display: none; }
+        .error-message.show { display: block; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-yellow-50 to-yellow-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="text-center">
+                <img src="https://img2.pic.in.th/pic/logo-1305d5f3e4e812926.png" alt="Logo" class="mx-auto mb-4 h-20">
+                <h1 class="text-3xl font-bold text-yellow-800 mb-2">ระบบสำรวจข้อมูลและความต้องการของวิทยากร</h1>
+                <h2 class="text-xl text-yellow-700">กิจกรรมอบรมพัฒนาการเขียน การอ่าน วรรณธารกระดุมทอง</h2>
+                <p class="text-gray-600 mt-2">โรงเรียนกระดุมทองวิทยา</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form id="instructorForm" class="space-y-8">
+            <!-- Section 1: Instructor Information -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-semibold text-yellow-800 mb-6 border-b-2 border-yellow-300 pb-2">
+                    ส่วนที่ 1: ข้อมูลวิทยากร
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Station Name -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ชื่อฐาน <span class="text-red-500">*</span></label>
+                        <select id="stationName" name="stationName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                            <option value="">เลือกฐาน</option>
+                            <option value="ฐานที่ 1 ฐานกวีนิพนธ์ฉันทลักษณ์">ฐานที่ 1 ฐานกวีนิพนธ์ฉันทลักษณ์</option>
+                            <option value="ฐานที่ 2 ฐานกวีนิพนธ์ไร้ฉันทลักษณ์">ฐานที่ 2 ฐานกวีนิพนธ์ไร้ฉันทลักษณ์</option>
+                            <option value="ฐานที่ 3 ฐานวรรณกรรมร้อยแก้ว">ฐานที่ 3 ฐานวรรณกรรมร้อยแก้ว</option>
+                            <option value="ฐานที่ 4 ฐานการอ่านออกเสียงร้อยกรองทำนองเสนาะ">ฐานที่ 4 ฐานการอ่านออกเสียงร้อยกรองทำนองเสนาะ</option>
+                        </select>
+                    </div>
+
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">คำนำหน้าชื่อ</label>
+                        <input type="text" id="title" name="title" placeholder="เช่น นาย, นาง, นางสาว, ดร." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    </div>
+
+                    <!-- First Name -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">ชื่อ <span class="text-red-500">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">นามสกุล <span class="text-red-500">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">หมายเลขติดต่อ</label>
+                        <input type="tel" id="phone" name="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Personal Address -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ที่อยู่</label>
+                        <textarea id="address" name="address" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                    </div>
+
+                    <!-- Office Address -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ที่อยู่หน่วยงาน (ถ้ามี)</label>
+                        <textarea id="officeAddress" name="officeAddress" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                    </div>
+
+                    <!-- Quote -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">คำคม/บทกวีเกี่ยวกับการอ่านการเขียนสั้น ๆ</label>
+                        <p class="text-sm text-gray-600 mb-2">กรุณาพิมพ์บทกลอน คำคม วาทะ ฯลฯ เกี่ยวกับการเขียนการอ่านของท่านเองสั้น ๆ ลงในกล่องข้อความนี้เพื่อใช้ในการจัดทำสื่อประชาสัมพันธ์</p>
+                        <textarea id="quote" name="quote" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ประวัติและผลงาน (PDF/Word)</label>
+                        <input type="file" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                        <p class="text-sm text-gray-600 mt-1">รองรับไฟล์ PDF และ Word เท่านั้น</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Requirements -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-2xl font-semibold text-yellow-800 mb-6 border-b-2 border-yellow-300 pb-2">
+                    ส่วนที่ 2: ความต้องการ
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Venue Requirements -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">ความต้องการด้านสถานที่ประจำฐาน</label>
+                        <select id="venueRequirement" name="venueRequirement" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                            <option value="">เลือกสถานที่</option>
+                            <option value="ห้องเรียน">ห้องเรียน</option>
+                            <option value="ใต้ร่มไม้">ใต้ร่มไม้</option>
+                            <option value="ลานโล่ง">ลานโล่ง</option>
+                            <option value="ห้องประชุมใหญ่">ห้องประชุมใหญ่</option>
+                        </select>
+                    </div>
+
+                    <!-- Invitation Name -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">ประสงค์ให้ออกหนังสือเชิญในนามผู้ใด</label>
+                        <input type="text" id="invitationName" name="invitationName" placeholder="เรียน ผู้อำนวยการ.... / เรียน นาย....." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Equipment Requirements -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ความต้องการด้านวัสดุอุปกรณ์ประจำฐาน</label>
+                        <p class="text-sm text-gray-600 mb-2">TV โปรเจคเตอร์ กระดาน สมุด กระดาษ ดินสอ ฯลฯ</p>
+                        <textarea id="equipmentRequirement" name="equipmentRequirement" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                    </div>
+
+                    <!-- Invitation Address -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-2">ที่อยู่ในการส่งหนังสือเชิญ</label>
+                        <textarea id="invitationAddress" name="invitationAddress" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-4 px-8 rounded-lg shadow-lg transform transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300">
+                    บันทึกข้อมูล
+                </button>
+            </div>
+        </form>
+
+        <!-- Loading Message -->
+        <div id="loadingMessage" class="loading fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 mx-auto mb-4"></div>
+                <p class="text-gray-700">กำลังบันทึกข้อมูล...</p>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-md">
+                <div class="text-green-500 text-5xl mb-4">✓</div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">บันทึกข้อมูลสำเร็จ!</h3>
+                <p class="text-gray-600 mb-4">ข้อมูลของท่านได้รับการบันทึกเรียบร้อยแล้ว</p>
+                <button onclick="closeSuccessMessage()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg">
+                    ปิด
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-md">
+                <div class="text-red-500 text-5xl mb-4">✗</div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">เกิดข้อผิดพลาด!</h3>
+                <p id="errorText" class="text-gray-600 mb-4">ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
+                <button onclick="closeErrorMessage()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg">
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUIdeL5ayHuuXyNqHSD_hNvyQwUg5-oaIiXoqozWoScw-U8rT9btxrU2c17pT_ugX0/exec';
+
+        document.getElementById('instructorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingMessage').classList.add('show');
+            
+            try {
+                // Collect form data
+                const formData = {
+                    action: 'insert',
+                    data: {
+                        stationName: document.getElementById('stationName').value,
+                        title: document.getElementById('title').value,
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value,
+                        address: document.getElementById('address').value,
+                        officeAddress: document.getElementById('officeAddress').value,
+                        phone: document.getElementById('phone').value,
+                        quote: document.getElementById('quote').value,
+                        venueRequirement: document.getElementById('venueRequirement').value,
+                        equipmentRequirement: document.getElementById('equipmentRequirement').value,
+                        invitationName: document.getElementById('invitationName').value,
+                        invitationAddress: document.getElementById('invitationAddress').value,
+                        registrationDate: new Date().toLocaleDateString('th-TH')
+                    }
+                };
+                
+                // Handle file upload
+                const fileInput = document.getElementById('resumeFile');
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const base64 = await fileToBase64(file);
+                    formData.data.resumeFile = {
+                        base64Data: base64,
+                        fileName: file.name,
+                        mimeType: file.type
+                    };
+                }
+                
+                console.log('Sending data:', formData);
+                
+                // Send data using POST method
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                    redirect: 'follow'
+                });
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                // Hide loading
+                document.getElementById('loadingMessage').classList.remove('show');
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                    console.log('Parsed result:', result);
+                } catch (parseError) {
+                    console.error('Parse error:', parseError);
+                    console.log('Raw response:', responseText);
+                    // If response contains success indicators
+                    if (responseText.includes('บันทึกข้อมูลสำเร็จ') || responseText.includes('success')) {
+                        result = { success: true, message: 'บันทึกข้อมูลสำเร็จ' };
+                    } else {
+                        throw new Error('ไม่สามารถประมวลผลการตอบกลับได้: ' + responseText.substring(0, 200));
+                    }
+                }
+                
+                if (result.success !== false) {
+                    document.getElementById('successMessage').classList.add('show');
+                    this.reset(); // Clear form
+                } else {
+                    throw new Error(result.message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').classList.remove('show');
+                document.getElementById('errorText').textContent = error.message;
+                document.getElementById('errorMessage').classList.add('show');
+            }
+        });
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        function closeSuccessMessage() {
+            document.getElementById('successMessage').classList.remove('show');
+        }
+        
+        function closeErrorMessage() {
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
