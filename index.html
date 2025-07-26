@@ -14,9 +14,31 @@
         .success-message.show { display: block; }
         .error-message { display: none; }
         .error-message.show { display: block; }
+        #debugInfo {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        #debugInfo.show { display: block; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-yellow-50 to-yellow-100 min-h-screen">
+    <!-- Debug Info Panel -->
+    <div id="debugInfo">
+        <h4>Debug Info:</h4>
+        <div id="debugContent"></div>
+        <button onclick="toggleDebug()" class="mt-2 bg-red-500 text-white px-2 py-1 rounded text-xs">ปิด</button>
+    </div>
+
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
@@ -25,6 +47,16 @@
                 <h1 class="text-3xl font-bold text-yellow-800 mb-2">ระบบสำรวจข้อมูลและความต้องการของวิทยากร</h1>
                 <h2 class="text-xl text-yellow-700">กิจกรรมอบรมพัฒนาการเขียน การอ่าน วรรณธารกระดุมทอง</h2>
                 <p class="text-gray-600 mt-2">โรงเรียนกระดุมทองวิทยา</p>
+                
+                <!-- Debug Toggle Button -->
+                <button onclick="toggleDebug()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded text-sm">
+                    🐛 Debug Info
+                </button>
+                
+                <!-- Test API Button -->
+                <button onclick="testAPI()" class="mt-2 bg-green-500 text-white px-4 py-2 rounded text-sm ml-2">
+                    🧪 Test API
+                </button>
             </div>
         </div>
 
@@ -184,9 +216,45 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUIdeL5ayHuuXyNqHSD_hNvyQwUg5-oaIiXoqozWoScw-U8rT9btxrU2c17pT_ugX0/exec';
+        let debugLogs = [];
+
+        function addDebugLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLogs.push(`[${timestamp}] ${message}`);
+            updateDebugDisplay();
+            console.log(`DEBUG: ${message}`);
+        }
+
+        function updateDebugDisplay() {
+            const debugContent = document.getElementById('debugContent');
+            debugContent.innerHTML = debugLogs.slice(-10).join('<br>'); // แสดง 10 บรรทัดล่าสุด
+        }
+
+        function toggleDebug() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.classList.toggle('show');
+        }
+
+        // Test API Function
+        async function testAPI() {
+            addDebugLog('Testing API connection...');
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                const result = await response.text();
+                addDebugLog(`API Test Response: ${result}`);
+                alert('API Test Result: ' + result);
+            } catch (error) {
+                addDebugLog(`API Test Error: ${error.message}`);
+                alert('API Test Error: ' + error.message);
+            }
+        }
 
         document.getElementById('instructorForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            addDebugLog('Form submission started');
             
             // Show loading
             document.getElementById('loadingMessage').classList.add('show');
@@ -212,9 +280,12 @@
                     }
                 };
                 
+                addDebugLog('Form data collected');
+                
                 // Handle file upload
                 const fileInput = document.getElementById('resumeFile');
                 if (fileInput.files.length > 0) {
+                    addDebugLog('Processing file upload...');
                     const file = fileInput.files[0];
                     const base64 = await fileToBase64(file);
                     formData.data.resumeFile = {
@@ -222,9 +293,11 @@
                         fileName: file.name,
                         mimeType: file.type
                     };
+                    addDebugLog('File processed successfully');
                 }
                 
-                console.log('Sending data:', formData);
+                addDebugLog('Sending request to: ' + SCRIPT_URL);
+                addDebugLog('Request data size: ' + JSON.stringify(formData).length + ' characters');
                 
                 // Send data using POST method
                 const response = await fetch(SCRIPT_URL, {
@@ -236,8 +309,11 @@
                     redirect: 'follow'
                 });
                 
+                addDebugLog(`Response status: ${response.status} ${response.statusText}`);
+                
                 const responseText = await response.text();
-                console.log('Response text:', responseText);
+                addDebugLog(`Response text length: ${responseText.length}`);
+                addDebugLog(`Response preview: ${responseText.substring(0, 200)}...`);
                 
                 // Hide loading
                 document.getElementById('loadingMessage').classList.remove('show');
@@ -245,19 +321,20 @@
                 let result;
                 try {
                     result = JSON.parse(responseText);
-                    console.log('Parsed result:', result);
+                    addDebugLog('Response parsed successfully');
                 } catch (parseError) {
-                    console.error('Parse error:', parseError);
-                    console.log('Raw response:', responseText);
+                    addDebugLog(`Parse error: ${parseError.message}`);
                     // If response contains success indicators
                     if (responseText.includes('บันทึกข้อมูลสำเร็จ') || responseText.includes('success')) {
                         result = { success: true, message: 'บันทึกข้อมูลสำเร็จ' };
+                        addDebugLog('Treating as success based on content');
                     } else {
                         throw new Error('ไม่สามารถประมวลผลการตอบกลับได้: ' + responseText.substring(0, 200));
                     }
                 }
                 
                 if (result.success !== false) {
+                    addDebugLog('Success! Showing success message');
                     document.getElementById('successMessage').classList.add('show');
                     this.reset(); // Clear form
                 } else {
@@ -265,7 +342,7 @@
                 }
                 
             } catch (error) {
-                console.error('Error:', error);
+                addDebugLog(`Error occurred: ${error.message}`);
                 document.getElementById('loadingMessage').classList.remove('show');
                 document.getElementById('errorText').textContent = error.message;
                 document.getElementById('errorMessage').classList.add('show');
@@ -288,6 +365,10 @@
         function closeErrorMessage() {
             document.getElementById('errorMessage').classList.remove('show');
         }
+
+        // Initialize debug
+        addDebugLog('System initialized');
+        addDebugLog('Script URL: ' + SCRIPT_URL);
     </script>
 </body>
 </html>
